@@ -18,6 +18,7 @@ class SwapiService {
     
     static private let baseURL = URL(string: "https://swapi.co/api/")
     static private let personPathComponent = "people"
+    static private let filmPathComponent = "films"
     
     static func fetchPerson(id: Int, completion: @escaping (Person?) -> Void) {
         // 1. Prepare URL
@@ -49,6 +50,26 @@ class SwapiService {
             }
         }.resume()
     }
+    
+    static func fetchFilm(url: URL, completion: @escaping (Film?) -> Void) {
+        
+        URLSession.shared.dataTask(with: url) { (data, _, error) in
+            if let error = error {
+                print(error, error.localizedDescription)
+                completion(nil)
+            }
+            
+            guard let data = data else { return completion(nil) }
+            
+            do {
+                let decoder = try JSONDecoder().decode(Film.self, from: data)
+                completion(decoder)
+            } catch {
+                print(error, error.localizedDescription)
+                completion(nil)
+            }
+        }.resume()
+    }
 }
 
 SwapiService.fetchPerson(id: 1) { (person) in
@@ -56,3 +77,13 @@ SwapiService.fetchPerson(id: 1) { (person) in
         print(person)
     }
 }
+
+func fetchFilm(url: URL) {
+    SwapiService.fetchFilm(url: url) { (film) in
+        if let film = film {
+            print(film)
+        }
+    }
+}
+
+
