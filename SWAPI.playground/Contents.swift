@@ -75,6 +75,13 @@ class SwapiService {
 SwapiService.fetchPerson(id: 1) { (person) in
     if let person = person {
         print(person)
+        
+        for filmURL in person.films {
+            SwapiService.fetchFilm(url: filmURL) { (film) in
+                guard let film = film else { return }
+                print(film.title)
+            }
+        }
     }
 }
 
@@ -85,5 +92,6 @@ func fetchFilm(url: URL) {
         }
     }
 }
+
 
 
